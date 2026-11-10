@@ -14,7 +14,7 @@
         <p>Create and manage HTML presentations and designs</p>
       </div>
       <div class="topbar-actions">
-        <button id="quit-app" class="danger">Tool beenden</button>
+        <button id="quit-app" class="danger">Shutdown</button>
       </div>
     </div>
   </header>
@@ -30,24 +30,24 @@
       <div class="panel-header">
         <h2>Presentations</h2>
         <div class="header-actions">
-          <button id="import-pres-file-btn" class="secondary">Import Datei</button>
+          <button id="import-pres-file-btn" class="secondary">Import File</button>
           <button id="ai-new-presentation" class="secondary">✨ AI Generate</button>
           <button id="new-presentation" class="primary">+ New Presentation</button>
         </div>
       </div>
       <div id="import-pres-panel" class="card ai-panel hidden">
-        <h3>Präsentation aus Datei importieren (PPTX / PDF / HTML)</h3>
-        <p class="hint" style="margin-top:0">Analysiert die Datei, extrahiert Folien und formatiert die Inhalte als modernes Markdown (Listen, Tabellen, Zitate, Hervorhebungen).</p>
-        <label>Datei <input id="import-pres-file" type="file" accept=".pptx,.pdf,.html,.htm" /></label>
+        <h3>Import Presentation from File (PPTX / PDF / HTML)</h3>
+        <p class="hint" style="margin-top:0">Analyzes the file, extracts slides and formats the content as modern Markdown (lists, tables, quotes, emphasis).</p>
+        <label>File <input id="import-pres-file" type="file" accept=".pptx,.pdf,.html,.htm" /></label>
         <div class="row two">
-          <label>Name (optional) <input id="import-pres-name" placeholder="Name der neuen Präsentation" /></label>
+          <label>Name (optional) <input id="import-pres-name" placeholder="Name of the new presentation" /></label>
           <label>Design
             <select id="import-pres-design"></select>
           </label>
         </div>
-        <label class="check"><input type="checkbox" id="import-pres-auto-design" checked /> Design automatisch aus Datei erzeugen (modernes CSS)</label>
+        <label class="check"><input type="checkbox" id="import-pres-auto-design" checked /> Automatically create a design from the file (modern CSS)</label>
         <div class="actions">
-          <button type="button" id="import-pres-run" class="primary">Importieren & Speichern</button>
+          <button type="button" id="import-pres-run" class="primary">Import & Save</button>
           <button type="button" id="import-pres-cancel" class="secondary">Cancel</button>
         </div>
       </div>
@@ -114,12 +114,12 @@
           <button type="button" id="ai-design-cancel" class="secondary">Cancel</button>
         </div>
         <hr style="border:none;border-top:1px solid var(--border);margin:14px 0" />
-        <h4 style="margin:0 0 8px">Ähnliches Design aus Datei (PPTX / PDF / HTML)</h4>
-        <label>Datei <input id="ai-design-file" type="file" accept=".pptx,.pdf,.html,.htm" /></label>
+        <h4 style="margin:0 0 8px">Similar Design from File (PPTX / PDF / HTML)</h4>
+        <label>File <input id="ai-design-file" type="file" accept=".pptx,.pdf,.html,.htm" /></label>
         <div class="actions">
-          <button type="button" id="ai-design-from-file" class="primary">Design aus Datei generieren &amp; speichern</button>
+          <button type="button" id="ai-design-from-file" class="primary">Generate Design from File &amp; Save</button>
         </div>
-        <p class="hint">Analysiert Farben/Stile/Inhalte der Datei und erzeugt ein ähnliches, modernes Design mit umfangreichem Custom-CSS (Gradients, Typografie, Listen, Tabellen, Zitate). Ohne AI wird ein heuristisches Design erzeugt.</p>
+        <p class="hint">Analyzes the file's colors/styles/content and creates a similar, modern design with extensive custom CSS (gradients, typography, lists, tables, quotes). Without AI, a heuristic design is generated.</p>
       </div>
       <div class="split">
         <div class="list-pane">
@@ -190,7 +190,7 @@
         <label>API Key <input id="ai-api-key" type="password" placeholder="Required for cloud providers; often optional for local" autocomplete="off" /></label>
         <div class="model-loader">
           <div class="actions" style="margin-top:0">
-            <button type="button" id="ai-load-models" class="secondary">Modelle laden</button>
+            <button type="button" id="ai-load-models" class="secondary">Load Models</button>
             <span id="ai-models-status" class="hint"></span>
           </div>
           <div id="ai-models-list" class="model-list"></div>

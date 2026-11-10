@@ -58,7 +58,7 @@ Presentation Toolbox is a local, browser-based Python application for building H
 - AI-assisted structuring when text is available; heuristic fallback without AI.
 
 ### Usability
-- **Tool beenden** button stops the local server from the UI.
+- **Shutdown** button stops the local server from the UI.
 - `start.bat` starts the app without a visible console window.
 - `Presentation Toolbox.vbs` starts it completely hidden (ideal for a desktop shortcut).
 - Automatic browser launch after startup.
@@ -72,7 +72,7 @@ Presentation Toolbox is a local, browser-based Python application for building H
 3. Double-click **`Presentation Toolbox.vbs`** (hidden start) or **`start.bat`**.
 4. The browser opens automatically at **http://127.0.0.1:5000**.
 
-To stop the app, click **Tool beenden** in the top-right corner of the UI.
+To stop the app, click **Shutdown** in the top-right corner of the UI.
 
 > Requires Python 3.10+ with `python`/`pythonw` available in `PATH`.
 > Download Python: <https://www.python.org/downloads/>
@@ -138,7 +138,7 @@ python -m pip install Flask markdown pypdf pymupdf python-pptx
 3. In **Presentations** or **Designs**, click **✨ AI Generate** and enter a prompt.
 
 ### Import an existing file
-- **Content:** Presentations → **Import Datei** → choose `.pptx`, `.pdf`, or `.html` → optionally keep *Design automatisch aus Datei erzeugen* checked → **Importieren & Speichern**. Slide content is imported as rich Markdown.
+- **Content:** Presentations → **Import File** → choose `.pptx`, `.pdf`, or `.html` → optionally keep *Automatically create a design from the file* checked → **Import & Save**. Slide content is imported as rich Markdown.
 - **Design:** Designs → **✨ AI Generate** → choose a file under *Ähnliches Design aus Datei* → generate and save. Without AI, a modern heuristic design with extensive custom CSS is created.
 
 ---

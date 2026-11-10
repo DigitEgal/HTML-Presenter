@@ -333,7 +333,7 @@ function renderModelList(models) {
   c.innerHTML = '';
   const current = (qs('ai-model') ? qs('ai-model').value.trim() : '');
   if (!models || !models.length) {
-    c.innerHTML = '<span class="hint">Keine Modelle gefunden.</span>';
+    c.innerHTML = '<span class="hint">No models found.</span>';
     return;
   }
   models.forEach(m => {
@@ -375,20 +375,20 @@ if (qs('ai-load-models')) {
   qs('ai-load-models').onclick = async () => {
     const btn = qs('ai-load-models');
     const status = qs('ai-models-status');
-    btn.disabled = true; btn.textContent = 'Lade...';
+    btn.disabled = true; btn.textContent = 'Loading...';
     if (status) status.textContent = '';
     try {
       const res = await api('/api/ai/models', { method: 'POST', body: JSON.stringify({ ai: currentAIConfig() }) });
       const models = res.models || [];
       renderModelList(models);
-      if (status) status.textContent = models.length ? `${models.length} Modell(e) gefunden` : 'Keine Modelle gefunden';
-      toast(models.length ? 'Modelle geladen' : 'Keine Modelle gefunden');
+      if (status) status.textContent = models.length ? `${models.length} model(s) found` : 'No models found';
+      toast(models.length ? 'Models loaded' : 'No models found');
     } catch (e) {
       renderModelList([]);
-      if (status) status.textContent = 'Fehler beim Laden';
-      toast(e.message || 'Modelle konnten nicht geladen werden');
+      if (status) status.textContent = 'Failed to load';
+      toast(e.message || 'Could not load models');
     } finally {
-      btn.disabled = false; btn.textContent = 'Modelle laden';
+      btn.disabled = false; btn.textContent = 'Load Models';
     }
   };
 }
@@ -418,9 +418,9 @@ if (qs('ai-new-design')) {
     qs('ai-design-from-file').onclick = async () => {
       const fileInput = qs('ai-design-file');
       const file = fileInput && fileInput.files && fileInput.files[0];
-      if (!file) { toast('Bitte eine Datei auswählen (.pptx, .pdf, .html)'); return; }
+      if (!file) { toast('Please select a file (.pptx, .pdf, .html)'); return; }
       const btn = qs('ai-design-from-file');
-      btn.disabled = true; btn.textContent = 'Analysiere...';
+      btn.disabled = true; btn.textContent = 'Analyzing...';
       try {
         const fd = new FormData();
         fd.append('file', file);
@@ -429,21 +429,21 @@ if (qs('ai-new-design')) {
         const res = await fetch('/api/ai/generate-design-from-file', { method: 'POST', body: fd });
         let data = {};
         try { data = await res.json(); } catch {}
-        if (!res.ok) throw new Error(data.error || data.description || 'Generierung fehlgeschlagen');
+        if (!res.ok) throw new Error(data.error || data.description || 'Generation failed');
         if (data.source === 'heuristic') {
-          toast('Design aus Datei extrahiert (ohne AI)');
+          toast('Design extracted from file (without AI)');
           if (data.ai_warning) console.warn('AI fallback:', data.ai_warning);
         } else {
-          toast('Design aus Datei generiert');
+          toast('Design generated from file');
         }
         qs('ai-design-panel').classList.add('hidden');
         fileInput.value = '';
         await loadDesigns();
         if (data.saved) openDesign(data.saved.id);
       } catch (e) {
-        toast(e.message || 'Generierung fehlgeschlagen');
+        toast(e.message || 'Generation failed');
       } finally {
-        btn.disabled = false; btn.textContent = 'Design aus Datei generieren & speichern';
+        btn.disabled = false; btn.textContent = 'Generate Design from File & Save';
       }
     };
   }
@@ -481,9 +481,9 @@ if (qs('import-pres-file-btn')) {
   qs('import-pres-run').onclick = async () => {
     const fileInput = qs('import-pres-file');
     const file = fileInput && fileInput.files && fileInput.files[0];
-    if (!file) { toast('Bitte eine Datei auswählen (.pptx, .pdf, .html)'); return; }
+    if (!file) { toast('Please select a file (.pptx, .pdf, .html)'); return; }
     const btn = qs('import-pres-run');
-    btn.disabled = true; btn.textContent = 'Importiere...';
+    btn.disabled = true; btn.textContent = 'Importing...';
     try {
       const fd = new FormData();
       fd.append('file', file);
@@ -494,12 +494,12 @@ if (qs('import-pres-file-btn')) {
       const res = await fetch('/api/presentations/import-file', { method: 'POST', body: fd });
       let data = {};
       try { data = await res.json(); } catch {}
-      if (!res.ok) throw new Error(data.error || data.description || 'Import fehlgeschlagen');
+      if (!res.ok) throw new Error(data.error || data.description || 'Import failed');
       if (data.design) {
-        toast(`Präsentation importiert (${data.slides_count || 0} Folien) · Design „${data.design.name}“ erzeugt`);
+        toast(`Presentation imported (${data.slides_count || 0} slides) · design "${data.design.name}" created`);
         await loadDesigns();
       } else {
-        toast(`Präsentation importiert (${data.slides_count || 0} Folien)`);
+        toast(`Presentation imported (${data.slides_count || 0} slides)`);
       }
       if (data.ai_warning) console.warn('AI warning:', data.ai_warning);
       qs('import-pres-panel').classList.add('hidden');
@@ -508,9 +508,9 @@ if (qs('import-pres-file-btn')) {
       await loadPresentations();
       if (data.saved) openPresentation(data.saved.id);
     } catch (e) {
-      toast(e.message || 'Import fehlgeschlagen');
+      toast(e.message || 'Import failed');
     } finally {
-      btn.disabled = false; btn.textContent = 'Importieren & Speichern';
+      btn.disabled = false; btn.textContent = 'Import & Save';
     }
   };
 }
@@ -518,14 +518,14 @@ if (qs('import-pres-file-btn')) {
 const quitBtn = qs('quit-app');
 if (quitBtn) {
   quitBtn.onclick = async () => {
-    if (!confirm('Tool wirklich beenden?')) return;
+    if (!confirm('Shut down the tool?')) return;
     try { await api('/api/shutdown', { method: 'POST' }); } catch (e) { /* server may exit before response */ }
-    toast('Tool wird beendet...');
+    toast('Shutting down...');
     setTimeout(() => {
       try { window.open('', '_self'); window.close(); } catch (e) {}
       try { window.close(); } catch (e) {}
       // fallback message if browser blocks closing
-      document.body.innerHTML = '<div style="font-family:Segoe UI,Arial,sans-serif;padding:40px;color:#e5edf8;background:#0b1020;min-height:100vh"><h2>Tool beendet</h2><p>Der Server wurde gestoppt. Sie können dieses Browserfenster jetzt schließen.</p></div>';
+      document.body.innerHTML = '<div style="font-family:Segoe UI,Arial,sans-serif;padding:40px;color:#e5edf8;background:#0b1020;min-height:100vh"><h2>Tool stopped</h2><p>The server has been stopped. You can close this browser window now.</p></div>';
     }, 400);
   };
 }
