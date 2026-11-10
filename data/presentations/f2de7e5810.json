@@ -1,0 +1,77 @@
+{
+  "id": "f2de7e5810",
+  "name": "Dartmouth Conference",
+  "design_id": "16f020c6fa",
+  "slides": [
+    {
+      "id": "5f96968d",
+      "title": "Dartmouth Conference",
+      "content": "**The Birth of Artificial Intelligence (1956)**",
+      "bullets": [],
+      "notes": "Opening slide",
+      "layout": "title"
+    },
+    {
+      "id": "23bb56a3",
+      "title": "Background",
+      "content": "In summer 1956, a group of researchers gathered at Dartmouth College to explore the idea that aspects of learning and intelligence could be precisely described and simulated by machines.",
+      "bullets": [
+        "Location: Dartmouth College, Hanover, New Hampshire",
+        "Duration: ~6–8 weeks (Summer 1956)",
+        "Organized as a research workshop"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "802a5ab8",
+      "title": "Key Organizers & Participants",
+      "content": "The proposal and workshop brought together pioneers of computing and cognition.",
+      "bullets": [
+        "John McCarthy (coined “Artificial Intelligence”)",
+        "Marvin Minsky",
+        "Nathaniel Rochester",
+        "Claude Shannon",
+        "Other attendees included Allen Newell and Herbert A. Simon"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "872a037a",
+      "title": "Core Ideas Proposed",
+      "content": "The proposal suggested that machines could be made to simulate human intelligence.",
+      "bullets": [
+        "Automatic computers and language use",
+        "Neuron nets and abstraction",
+        "Creativity and problem solving",
+        "Self-improvement"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "71ccd9c4",
+      "title": "Impact & Legacy",
+      "content": "The Dartmouth workshop helped establish AI as a field and shaped decades of research.",
+      "bullets": [
+        "Popularized the term *Artificial Intelligence*",
+        "Set an ambitious agenda for symbolic AI",
+        "Influenced research directions, optimism, and later AI winters",
+        "Remembered as a foundational moment in computing history"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "a59e5b25",
+      "title": "Key Takeaway",
+      "content": "A small summer workshop launched a field that continues to transform science, business, and society.",
+      "bullets": [],
+      "notes": "",
+      "layout": "section"
+    }
+  ],
+  "created_at": "2026-11-10T13:57:36.615763+00:00",
+  "updated_at": "2026-11-10T13:57:36.615763+00:00"
+}

@@ -1,0 +1,78 @@
+{
+  "id": "5d9dd6f68e",
+  "name": "AI History",
+  "design_id": "6336f45c80",
+  "slides": [
+    {
+      "id": "5608db52",
+      "title": "AI History",
+      "content": "**From early ideas to modern intelligent systems**",
+      "bullets": [],
+      "notes": "",
+      "layout": "title"
+    },
+    {
+      "id": "e31c74fb",
+      "title": "Early Foundations (1940s–1950s)",
+      "content": "Theoretical and computational foundations set the stage for AI.",
+      "bullets": [
+        "Turing’s work on computation and machine intelligence (1950)",
+        "Dartmouth Conference (1956) coins “Artificial Intelligence”",
+        "Early programs for logic, games, and problem solving"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "224311e1",
+      "title": "Symbolic AI & Expert Systems (1960s–1980s)",
+      "content": "Researchers focused on rules, knowledge, and reasoning.",
+      "bullets": [
+        "Growth of symbolic methods and knowledge representation",
+        "Expert systems applied in industry",
+        "Periods of optimism followed by AI winters due to limits and funding cuts"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "e00e1bfc",
+      "title": "Machine Learning Rises (1990s–2010s)",
+      "content": "Data and statistical methods became central to progress.",
+      "bullets": [
+        "Advances in probabilistic models and neural networks",
+        "Milestones: Deep Blue (1997), Watson (2011)",
+        "Deep learning breakthroughs in vision and speech (2012+)"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "cc712d19",
+      "title": "Modern Era (2017–Today)",
+      "content": "Large-scale models expanded capabilities and adoption.",
+      "bullets": [
+        "Transformers and large language models",
+        "Generative AI for text, code, and media",
+        "Wider deployment across products, science, and business",
+        "Growing focus on safety, alignment, and governance"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "fc6eb737",
+      "title": "Looking Ahead",
+      "content": "AI continues to evolve through research, applications, and responsible development.",
+      "bullets": [
+        "More capable and efficient models",
+        "Human–AI collaboration",
+        "Emphasis on trust, ethics, and societal impact"
+      ],
+      "notes": "",
+      "layout": "section"
+    }
+  ],
+  "created_at": "2026-11-10T13:57:36.615763+00:00",
+  "updated_at": "2026-11-10T13:57:36.615763+00:00"
+}

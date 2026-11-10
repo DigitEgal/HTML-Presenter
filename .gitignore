@@ -1,0 +1,25 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Local configuration / secrets
+data/settings.json
+
+# Logs
+logs/*
+!logs/.gitkeep
+
+# Exports
+exports/*
+!exports/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,89 @@
+{
+  "id": "cca2935285",
+  "name": "Digital Transformation",
+  "design_id": "623749763a",
+  "slides": [
+    {
+      "id": "5f60a835",
+      "title": "Digital Transformation",
+      "content": "**Rethinking processes, culture, and value in a digital world**",
+      "bullets": [],
+      "notes": "",
+      "layout": "title"
+    },
+    {
+      "id": "125b9efd",
+      "title": "What Is Digital Transformation?",
+      "content": "Digital transformation is the integration of digital technology into all areas of an organization, changing how it operates and delivers value.",
+      "bullets": [
+        "Modernize processes and systems",
+        "Improve customer and employee experiences",
+        "Enable data-driven decisions"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "712590bb",
+      "title": "Key Drivers",
+      "content": "Organizations transform in response to internal and external pressures.",
+      "bullets": [
+        "Changing customer expectations",
+        "Competitive pressure and new business models",
+        "Advances in cloud, data, AI, and connectivity",
+        "Need for agility and resilience"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "db5c2467",
+      "title": "Core Pillars",
+      "content": "Successful transformation balances technology with people and process.",
+      "bullets": [
+        "**Technology:** cloud, automation, platforms",
+        "**Data:** governance, analytics, insights",
+        "**People:** skills, culture, change management",
+        "**Process:** redesign for efficiency and value"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "94a67262",
+      "title": "Challenges",
+      "content": "Transformation is as much organizational as it is technical.",
+      "bullets": [
+        "Legacy systems and technical debt",
+        "Siloed data and processes",
+        "Skill gaps and resistance to change",
+        "Security, privacy, and compliance"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "54499872",
+      "title": "Roadmap to Success",
+      "content": "A pragmatic, iterative approach delivers sustainable results.",
+      "bullets": [
+        "Define clear vision and outcomes",
+        "Start with high-value use cases",
+        "Invest in people and governance",
+        "Measure progress and scale what works"
+      ],
+      "notes": "",
+      "layout": "default"
+    },
+    {
+      "id": "930f02d6",
+      "title": "The Goal",
+      "content": "Create an adaptable organization that continuously delivers value through digital capabilities.",
+      "bullets": [],
+      "notes": "",
+      "layout": "section"
+    }
+  ],
+  "created_at": "2026-11-10T13:57:36.615763+00:00",
+  "updated_at": "2026-11-10T13:57:36.615763+00:00"
+}

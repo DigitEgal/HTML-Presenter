@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Presentation Toolbox</title>
+  <link rel="stylesheet" href="/static/css/toolbox.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-main">
+      <div>
+        <h1>Presentation Toolbox</h1>
+        <p>Create and manage HTML presentations and designs</p>
+      </div>
+      <div class="topbar-actions">
+        <button id="quit-app" class="danger">Tool beenden</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="tabs">
+      <button class="tab active" data-tab="presentations">Presentations</button>
+      <button class="tab" data-tab="designs">Designs</button>
+      <button class="tab" data-tab="ai">AI Settings</button>
+    </nav>
+
+    <section id="tab-presentations" class="tab-panel active">
+      <div class="panel-header">
+        <h2>Presentations</h2>
+        <div class="header-actions">
+          <button id="import-pres-file-btn" class="secondary">Import Datei</button>
+          <button id="ai-new-presentation" class="secondary">✨ AI Generate</button>
+          <button id="new-presentation" class="primary">+ New Presentation</button>
+        </div>
+      </div>
+      <div id="import-pres-panel" class="card ai-panel hidden">
+        <h3>Präsentation aus Datei importieren (PPTX / PDF / HTML)</h3>
+        <p class="hint" style="margin-top:0">Analysiert die Datei, extrahiert Inhalte/Folien und überträgt sie auf das gewählte Design.</p>
+        <label>Datei <input id="import-pres-file" type="file" accept=".pptx,.pdf,.html,.htm" /></label>
+        <div class="row two">
+          <label>Name (optional) <input id="import-pres-name" placeholder="Name der neuen Präsentation" /></label>
+          <label>Design
+            <select id="import-pres-design"></select>
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" id="import-pres-run" class="primary">Importieren & Speichern</button>
+          <button type="button" id="import-pres-cancel" class="secondary">Cancel</button>
+        </div>
+      </div>
+      <div id="ai-pres-panel" class="card ai-panel hidden">
+        <h3>AI: Create Presentation</h3>
+        <label>Prompt / Topic <textarea id="ai-pres-prompt" rows="3" placeholder="e.g. Create a 8-slide presentation about ..."></textarea></label>
+        <div class="row two">
+          <label>Slide count (optional) <input id="ai-pres-count" type="number" min="1" max="30" placeholder="e.g. 8" /></label>
+          <label>Design
+            <select id="ai-pres-design"></select>
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" id="ai-pres-generate" class="primary">Generate & Save</button>
+          <button type="button" id="ai-pres-cancel" class="secondary">Cancel</button>
+        </div>
+        <p class="hint">Uses the provider configured in AI Settings (local LM Studio/Ollama or cloud models).</p>
+      </div>
+      <div class="split">
+        <div class="list-pane">
+          <ul id="presentation-list" class="item-list"></ul>
+        </div>
+        <div class="editor-pane">
+          <form id="presentation-form" class="card hidden">
+            <input type="hidden" id="pres-id" />
+            <div class="row two">
+              <label>Name <input id="pres-name" required /></label>
+              <label>Design
+                <select id="pres-design"></select>
+              </label>
+            </div>
+            <div class="slides-header">
+              <h3>Slides</h3>
+              <button type="button" id="add-slide" class="secondary">+ Add Slide</button>
+            </div>
+            <div id="slides-editor" class="slides-editor"></div>
+            <div class="actions">
+              <button type="submit" class="primary">Save Presentation</button>
+              <button type="button" id="preview-pres" class="secondary">Preview</button>
+              <button type="button" id="download-pres" class="secondary">Download HTML</button>
+              <button type="button" id="delete-pres" class="danger">Delete</button>
+            </div>
+          </form>
+          <div id="presentation-empty" class="empty">Select a presentation or create a new one.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-designs" class="tab-panel">
+      <div class="panel-header">
+        <h2>Designs</h2>
+        <div class="header-actions">
+          <button id="ai-new-design" class="secondary">✨ AI Generate</button>
+          <button id="import-design" class="secondary">Import JSON</button>
+          <input type="file" id="import-design-file" accept="application/json,.json" class="hidden" />
+          <button id="new-design" class="primary">+ New Design</button>
+        </div>
+      </div>
+      <div id="ai-design-panel" class="card ai-panel hidden">
+        <h3>AI: Create Design</h3>
+        <label>Prompt / Style description <textarea id="ai-design-prompt" rows="3" placeholder="e.g. A modern dark theme with teal accents, clean sans-serif fonts..."></textarea></label>
+        <div class="actions">
+          <button type="button" id="ai-design-generate" class="primary">Generate & Save</button>
+          <button type="button" id="ai-design-cancel" class="secondary">Cancel</button>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:14px 0" />
+        <h4 style="margin:0 0 8px">Ähnliches Design aus Datei (PPTX / PDF / HTML)</h4>
+        <label>Datei <input id="ai-design-file" type="file" accept=".pptx,.pdf,.html,.htm" /></label>
+        <div class="actions">
+          <button type="button" id="ai-design-from-file" class="primary">Design aus Datei generieren &amp; speichern</button>
+        </div>
+        <p class="hint">Analysiert Farben/Stile/Inhalte der Datei und erzeugt ein ähnliches Design (AI). Für beste Ergebnisse AI Settings konfigurieren.</p>
+      </div>
+      <div class="split">
+        <div class="list-pane">
+          <ul id="design-list" class="item-list"></ul>
+        </div>
+        <div class="editor-pane">
+          <form id="design-form" class="card hidden">
+            <input type="hidden" id="design-id" />
+            <label>Name <input id="design-name" required /></label>
+            <label>Description <input id="design-description" /></label>
+            <div class="row two">
+              <label>Background <input type="color" id="design-bg" value="#0f172a" /></label>
+              <label>Text <input type="color" id="design-text" value="#e2e8f0" /></label>
+            </div>
+            <div class="row two">
+              <label>Heading <input type="color" id="design-heading" value="#f8fafc" /></label>
+              <label>Accent <input type="color" id="design-accent" value="#38bdf8" /></label>
+            </div>
+            <div class="row two">
+              <label>Body Font <input id="design-font" value="Segoe UI, Arial, sans-serif" /></label>
+              <label>Heading Font <input id="design-heading-font" value="Segoe UI, Arial, sans-serif" /></label>
+            </div>
+            <div class="row two">
+              <label>Slide Align
+                <select id="design-align">
+                  <option value="left">Left</option>
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                </select>
+              </label>
+              <label>Title Align
+                <select id="design-title-align">
+                  <option value="center">Center</option>
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                </select>
+              </label>
+            </div>
+            <label class="check"><input type="checkbox" id="design-numbers" checked /> Show slide numbers</label>
+            <label>Custom CSS <textarea id="design-custom-css" rows="6" placeholder=".slide-title { letter-spacing: 1px; }"></textarea></label>
+            <div class="actions">
+              <button type="submit" class="primary">Save Design</button>
+              <button type="button" id="delete-design" class="danger">Delete</button>
+            </div>
+          </form>
+          <div id="design-empty" class="empty">Select a design or create a new one.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-ai" class="tab-panel">
+      <div class="panel-header">
+        <h2>AI Settings</h2>
+      </div>
+      <form id="ai-settings-form" class="card" style="max-width:760px">
+        <p class="hint" style="margin-top:0">Configure a local (LM Studio / Ollama) or cloud (OpenAI, Claude, Mistral, etc.) model for AI-assisted creation of designs and presentations.</p>
+        <div class="row two">
+          <label>Provider
+            <select id="ai-provider">
+              <option value="openai_compatible">OpenAI-compatible (OpenAI, LM Studio, Mistral, Groq, etc.)</option>
+              <option value="ollama">Ollama (native /api)</option>
+              <option value="anthropic">Anthropic (Claude)</option>
+            </select>
+          </label>
+          <label>Model <input id="ai-model" placeholder="e.g. gpt-4o-mini, llama3.1, mistral-large, claude-3-5-sonnet-latest" /></label>
+        </div>
+        <label>Base URL <input id="ai-base-url" placeholder="e.g. http://localhost:1234/v1 or http://localhost:11434 or https://api.openai.com/v1" /></label>
+        <label>API Key <input id="ai-api-key" type="password" placeholder="Required for cloud providers; often optional for local" autocomplete="off" /></label>
+        <div class="model-loader">
+          <div class="actions" style="margin-top:0">
+            <button type="button" id="ai-load-models" class="secondary">Modelle laden</button>
+            <span id="ai-models-status" class="hint"></span>
+          </div>
+          <div id="ai-models-list" class="model-list"></div>
+        </div>
+        <label>Temperature <input id="ai-temperature" type="number" step="0.1" min="0" max="2" value="0.7" /></label>
+        <div class="actions">
+          <button type="submit" class="primary">Save Settings</button>
+        </div>
+        <div class="card" style="margin-top:14px;background:#101827">
+          <strong>Examples</strong>
+          <ul class="hint" style="margin:8px 0 0 18px;line-height:1.5">
+            <li><b>LM Studio (local):</b> Provider OpenAI-compatible, Base URL <code>http://localhost:1234/v1</code>, Model as shown in LM Studio, API key optional</li>
+            <li><b>Ollama (local):</b> Provider Ollama, Base URL <code>http://localhost:11434</code>, Model e.g. <code>llama3.1</code></li>
+            <li><b>OpenAI:</b> Provider OpenAI-compatible, Base URL <code>https://api.openai.com/v1</code>, Model e.g. <code>gpt-4o-mini</code>, API key required</li>
+            <li><b>Anthropic (Claude):</b> Provider Anthropic, Base URL <code>https://api.anthropic.com/v1</code> (or blank), Model e.g. <code>claude-3-5-sonnet-latest</code>, API key required</li>
+            <li><b>Mistral:</b> Provider OpenAI-compatible, Base URL <code>https://api.mistral.ai/v1</code>, Model e.g. <code>mistral-large-latest</code>, API key required</li>
+          </ul>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/static/js/toolbox.js"></script>
+</body>
+</html>
