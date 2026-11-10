@@ -10,6 +10,14 @@ from app.renderer import render_presentation_html, export_presentation
 app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
 
 
+def _ai_configured(settings: dict) -> bool:
+    ai_cfg = (settings or {}).get("ai") or {}
+    provider = (ai_cfg.get("provider") or "openai_compatible").lower()
+    model = (ai_cfg.get("model") or "").strip()
+    base_url = (ai_cfg.get("base_url") or "").strip()
+    return bool(model) and (bool(base_url) or provider == "anthropic")
+
+
 def ensure_seed():
     designs = storage.list_designs()
     if not designs:
@@ -295,18 +303,33 @@ def api_ai_generate_design_from_file():
     except Exception as e:
         return jsonify({"error": f"Could not analyze file: {e}"}), 400
     prompt = (request.form.get('prompt') or "").strip()
-    full_prompt = "Create a presentation design similar to the style of the uploaded file.\n\n" + hints
+    full_prompt = (
+        "Create a modern, polished presentation design similar to the style of the uploaded file.\n"
+        "Use the detected colors and fonts as the base. Generate EXTENSIVE custom_css with:\n"
+        "- layered gradient backgrounds and subtle glows/grid overlays,\n"
+        "- strong typography, accent underlines and balanced titles,\n"
+        "- styled Markdown elements (headings, bold/italic, lists with markers, tables, blockquotes, code, images),\n"
+        "- modern progress bar, slide-number pill and controls,\n"
+        "- responsive and reduced-motion rules.\n\n"
+        + hints
+    )
     if prompt:
         full_prompt += "\n\nAdditional instructions:\n" + prompt
     ai_error = None
     source = "ai"
-    try:
-        result = ai.generate_design(storage.get_settings(), full_prompt)
-    except Exception as e:
-        # Heuristic fallback: build a design directly from extracted colors/fonts
-        ai_error = str(e)
+    settings = storage.get_settings()
+    name = os.path.splitext(getattr(request.files['file'], 'filename', '') or 'Imported Style')[0]
+    if _ai_configured(settings):
+        try:
+            result = ai.generate_design(settings, full_prompt)
+        except Exception as e:
+            # Heuristic fallback: build a design directly from extracted colors/fonts
+            ai_error = str(e)
+            source = "heuristic"
+            result = extractors.design_from_hints(extracted, name=f"{name} Style" if name else None)
+    else:
+        ai_error = "AI is not configured. Using heuristic design extraction."
         source = "heuristic"
-        name = os.path.splitext(getattr(request.files['file'], 'filename', '') or 'Imported Style')[0]
         result = extractors.design_from_hints(extracted, name=f"{name} Style" if name else None)
     if request.form.get('save', 'true').lower() in ('1', 'true', 'yes', 'on'):
         saved = storage.save_design(result)
@@ -340,29 +363,36 @@ def api_import_presentation_file():
 
     # If no slides extracted, try AI to structure available text/content
     if use_ai and not slides:
-        try:
-            if text:
-                prompt = (
-                    f"Create a structured presentation from the following content extracted from a {ftype.upper()} file named '{filename}'.\n"
-                    f"Preserve the key topics, facts, and structure. Create clear slide titles, concise content (Markdown allowed), and useful bullets.\n\n"
-                    f"EXTRACTED CONTENT:\n{text[:12000]}"
-                )
-                result = ai.generate_presentation(storage.get_settings(), prompt)
-            else:
-                # No extractable text (e.g. scanned/image-only PDF or missing PDF extractor): cannot reliably send file to text-only provider
-                if ftype == "pdf" and not extracted.get("pdf_text_extractor"):
-                    ai_error = "No extractable text found. PDF text extraction library (pypdf) is not available in the running Python environment. Run install.bat and start the app via start.bat (.venv), then try again."
+        if not _ai_configured(storage.get_settings()):
+            ai_error = "AI is not configured. Using heuristic content extraction."
+        else:
+            try:
+                if text:
+                    prompt = (
+                        f"Create a structured, modern presentation from the following content extracted from a {ftype.upper()} file named '{filename}'.\n"
+                        "Preserve the key topics, facts, and structure. Create clear slide titles and concise slides.\n"
+                        "Use rich Markdown in the 'content' field: a short intro paragraph, **bold** key terms, "
+                        "'- ' bullet lists, nested lists with four-space indentation, '### ' subheadings, "
+                        "Markdown tables for comparisons/data, and '> ' blockquotes for key takeaways or quotes. "
+                        "Avoid overloading slides with long paragraphs.\n\n"
+                        f"EXTRACTED CONTENT:\n{text[:12000]}"
+                    )
+                    result = ai.generate_presentation(storage.get_settings(), prompt)
                 else:
-                    ai_error = "No extractable text found in file. The PDF may be scanned/image-only. AI text models require extracted/selectable text (use OCR or a PDF with selectable text)."
-                result = None
-            if result:
-                ai_slides = result.get("slides") or []
-                if ai_slides:
-                    slides = ai_slides
-                    if result.get("name") and not (request.form.get('name') or "").strip():
-                        name = result.get("name")
-        except Exception as e:
-            ai_error = str(e)
+                    # No extractable text (e.g. scanned/image-only PDF or missing PDF extractor)
+                    if ftype == "pdf" and not extracted.get("pdf_text_extractor"):
+                        ai_error = "No extractable text found. PDF text extraction library (pypdf) is not available in the running Python environment. Run install.bat and start the app via start.bat (.venv), then try again."
+                    else:
+                        ai_error = "No extractable text found in file. The PDF may be scanned/image-only. AI text models require extracted/selectable text (use OCR or a PDF with selectable text)."
+                    result = None
+                if result:
+                    ai_slides = result.get("slides") or []
+                    if ai_slides:
+                        slides = ai_slides
+                        if result.get("name") and not (request.form.get('name') or "").strip():
+                            name = result.get("name")
+            except Exception as e:
+                ai_error = str(e)
 
     if not slides:
         if text:
@@ -372,9 +402,19 @@ def api_import_presentation_file():
                 lines = [ln.strip() for ln in ptxt.splitlines() if ln.strip()]
                 title = (lines[0][:120] if lines else f"Slide {i}")
                 rest = lines[1:]
-                bullets = rest if 1 < len(rest) <= 8 else []
-                content = "" if bullets else "\n".join(rest[:6])
-                slides.append({"title": title, "content": content, "bullets": bullets, "notes": "", "layout": "title" if i == 1 else "default"})
+                if len(rest) == 1 and len(rest[0]) > 120:
+                    content = rest[0]
+                elif rest:
+                    content = "\n".join(f"- {extractors._md_bullet_text(r)}" for r in rest[:10])
+                else:
+                    content = ""
+                slides.append({
+                    "title": title,
+                    "content": content,
+                    "bullets": [],
+                    "notes": "",
+                    "layout": "title" if i == 1 else "default",
+                })
 
     if not slides:
         msg = "No presentation content/slides could be extracted from the file."
@@ -389,6 +429,16 @@ def api_import_presentation_file():
             msg += f" AI: {ai_error}"
         return jsonify({"error": msg}), 400
 
+    auto_design = request.form.get('auto_design', 'true').lower() in ('1', 'true', 'yes', 'on')
+    created_design = None
+    if not design_id and auto_design:
+        try:
+            design = extractors.design_from_hints(extracted, name=f"{name} Style")
+            created_design = storage.save_design(design)
+            design_id = created_design["id"]
+        except Exception:
+            created_design = None
+
     payload = {
         "name": name,
         "design_id": design_id,
@@ -396,6 +446,8 @@ def api_import_presentation_file():
     }
     saved = storage.save_presentation(payload)
     resp = {"saved": saved, "slides_count": len(slides), "type": ftype}
+    if created_design:
+        resp["design"] = created_design
     if ai_error:
         resp["ai_warning"] = ai_error
     return jsonify(resp)

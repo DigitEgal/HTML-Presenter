@@ -172,7 +172,7 @@ def chat(settings: dict, messages: list, temperature=None) -> str:
     return msg.get("content") or ""
 
 
-DESIGN_SYSTEM = """You are a presentation design assistant. Generate a JSON object for an HTML presentation design/theme.
+DESIGN_SYSTEM = """You are an expert presentation design assistant. Generate a JSON object for a modern HTML presentation design/theme.
 Return ONLY valid JSON (no markdown fences, no explanation) with this exact structure:
 {
   "name": "Design Name",
@@ -187,26 +187,45 @@ Return ONLY valid JSON (no markdown fences, no explanation) with this exact stru
     "slide_align": "left|center|right",
     "title_align": "left|center|right",
     "show_slide_numbers": true,
-    "custom_css": "optional extra CSS rules for .slide, .slide-title, .slide-content, .bullets, .progress etc."
+    "custom_css": "EXTENSIVE, production-ready CSS rules"
   }
 }
-Use readable, high-contrast colors and professional styling."""
+The custom_css field is REQUIRED and must make the deck look modern and polished. Include:
+- CSS variables (:root) for accent-2, surface colors, borders and muted text.
+- A layered background for .slide (gradients, subtle grid/glow, optional ::before overlay).
+- Strong typography: .slide-title with letter-spacing, line-height, text-wrap: balance; accent underline for h2.slide-title.
+- Styled Markdown elements inside .slide-content: p, h1-h4, strong, em, a, ul/ol/li (markers), blockquote, table/th/td, code, pre, img, hr.
+- Card/panel styling for .slide-inner or specific layouts if appropriate.
+- Modern .progress bar, .slide-number pill and .controls button styling.
+- Responsive tweaks in @media (max-width: 800px) and prefers-reduced-motion.
+Use readable, high-contrast colors. Prefer clean spacing, rounded corners and subtle shadows. Do not include <style> tags — only raw CSS rules."""
 
-PRESENTATION_SYSTEM = """You are a presentation authoring assistant. Generate a JSON object for an HTML presentation.
+PRESENTATION_SYSTEM = """You are an expert presentation authoring assistant. Generate a JSON object for a modern HTML presentation.
 Return ONLY valid JSON (no markdown fences, no explanation) with this exact structure:
 {
   "name": "Presentation Title",
   "slides": [
     {
       "title": "Slide title",
-      "content": "Markdown text content (can be empty)",
-      "bullets": ["bullet 1", "bullet 2"],
+      "content": "Rich Markdown content (can be empty)",
+      "bullets": ["optional bullet 1", "optional bullet 2"],
       "notes": "speaker notes (optional)",
       "layout": "title|default|section"
     }
   ]
 }
-Create clear, well-structured slides. Use layout "title" for the first/cover slide, "section" for section breaks, "default" for content slides. Content may use Markdown (bold, italic, etc.)."""
+Create clear, well-structured slides. Use layout "title" for the first/cover slide, "section" for section breaks, "default" for content slides.
+
+IMPORTANT: Put the main body in "content" using rich Markdown, not plain text. Use:
+- a short intro paragraph,
+- **bold** for key terms and labels,
+- *italic* for emphasis or captions,
+- bullet lists with "- " and nested lists with four-space indentation,
+- "### " subheadings for groups of points,
+- Markdown tables for comparisons or data,
+- "> " blockquotes for quotes or key takeaways,
+- [links](https://example.com) where useful.
+Keep slides concise (roughly 3-6 bullets or one table/section). Use the "bullets" array only for very simple flat lists. Never overload a slide with long paragraphs."""
 
 
 def generate_design(settings: dict, prompt: str) -> dict:

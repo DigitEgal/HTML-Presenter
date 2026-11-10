@@ -489,11 +489,18 @@ if (qs('import-pres-file-btn')) {
       fd.append('file', file);
       fd.append('name', qs('import-pres-name').value || '');
       fd.append('design_id', qs('import-pres-design').value || '');
+      const autoDesign = qs('import-pres-auto-design');
+      fd.append('auto_design', autoDesign && autoDesign.checked ? 'true' : 'false');
       const res = await fetch('/api/presentations/import-file', { method: 'POST', body: fd });
       let data = {};
       try { data = await res.json(); } catch {}
       if (!res.ok) throw new Error(data.error || data.description || 'Import fehlgeschlagen');
-      toast(`Präsentation importiert (${data.slides_count || 0} Folien)`);
+      if (data.design) {
+        toast(`Präsentation importiert (${data.slides_count || 0} Folien) · Design „${data.design.name}“ erzeugt`);
+        await loadDesigns();
+      } else {
+        toast(`Präsentation importiert (${data.slides_count || 0} Folien)`);
+      }
       if (data.ai_warning) console.warn('AI warning:', data.ai_warning);
       qs('import-pres-panel').classList.add('hidden');
       fileInput.value = '';

@@ -37,7 +37,7 @@
       </div>
       <div id="import-pres-panel" class="card ai-panel hidden">
         <h3>Präsentation aus Datei importieren (PPTX / PDF / HTML)</h3>
-        <p class="hint" style="margin-top:0">Analysiert die Datei, extrahiert Inhalte/Folien und überträgt sie auf das gewählte Design.</p>
+        <p class="hint" style="margin-top:0">Analysiert die Datei, extrahiert Folien und formatiert die Inhalte als modernes Markdown (Listen, Tabellen, Zitate, Hervorhebungen).</p>
         <label>Datei <input id="import-pres-file" type="file" accept=".pptx,.pdf,.html,.htm" /></label>
         <div class="row two">
           <label>Name (optional) <input id="import-pres-name" placeholder="Name der neuen Präsentation" /></label>
@@ -45,6 +45,7 @@
             <select id="import-pres-design"></select>
           </label>
         </div>
+        <label class="check"><input type="checkbox" id="import-pres-auto-design" checked /> Design automatisch aus Datei erzeugen (modernes CSS)</label>
         <div class="actions">
           <button type="button" id="import-pres-run" class="primary">Importieren & Speichern</button>
           <button type="button" id="import-pres-cancel" class="secondary">Cancel</button>
@@ -118,7 +119,7 @@
         <div class="actions">
           <button type="button" id="ai-design-from-file" class="primary">Design aus Datei generieren &amp; speichern</button>
         </div>
-        <p class="hint">Analysiert Farben/Stile/Inhalte der Datei und erzeugt ein ähnliches Design (AI). Für beste Ergebnisse AI Settings konfigurieren.</p>
+        <p class="hint">Analysiert Farben/Stile/Inhalte der Datei und erzeugt ein ähnliches, modernes Design mit umfangreichem Custom-CSS (Gradients, Typografie, Listen, Tabellen, Zitate). Ohne AI wird ein heuristisches Design erzeugt.</p>
       </div>
       <div class="split">
         <div class="list-pane">

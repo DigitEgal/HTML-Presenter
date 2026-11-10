@@ -51,7 +51,10 @@ Presentation Toolbox is a local, browser-based Python application for building H
 
 ### Import & analysis
 - Import **PPTX**, **PDF**, and **HTML** files and transfer their content to any design.
+- Content is converted to **rich Markdown**: headings, bold/italic emphasis, nested lists, tables, blockquotes and links.
 - Extract colors, fonts, background, and accent colors from uploaded files to generate a similar design.
+- Imported designs include **extensive modern custom CSS**: layered gradients, typography scale, styled lists/tables/quotes/images, progress bar and responsive rules.
+- Optionally create a matching design automatically during import (*Design automatisch aus Datei erzeugen*).
 - AI-assisted structuring when text is available; heuristic fallback without AI.
 
 ### Usability
@@ -135,8 +138,8 @@ python -m pip install Flask markdown pypdf pymupdf python-pptx
 3. In **Presentations** or **Designs**, click **✨ AI Generate** and enter a prompt.
 
 ### Import an existing file
-- **Content:** Presentations → **Import Datei** → choose `.pptx`, `.pdf`, or `.html` → select a target design → **Importieren & Speichern**.
-- **Design:** Designs → **✨ AI Generate** → choose a file under *Ähnliches Design aus Datei* → generate and save.
+- **Content:** Presentations → **Import Datei** → choose `.pptx`, `.pdf`, or `.html` → optionally keep *Design automatisch aus Datei erzeugen* checked → **Importieren & Speichern**. Slide content is imported as rich Markdown.
+- **Design:** Designs → **✨ AI Generate** → choose a file under *Ähnliches Design aus Datei* → generate and save. Without AI, a modern heuristic design with extensive custom CSS is created.
 
 ---
 
@@ -163,13 +166,15 @@ The app supports:
 
 | Format | Content extraction | Design extraction |
 |---|---|---|
-| **PPTX** | Slide titles, body text, bullets, notes via `python-pptx` | Theme/slide colors, background, fonts, palette |
-| **PDF** | Page text, titles, bullets via `PyMuPDF`; fallback `pypdf` | Background color, text/heading colors, accent color, fonts (PyMuPDF) |
-| **HTML** | Sections/slides, headings, text | CSS colors, variables, background, fonts, accent |
+| **PPTX** | Titles, body text, nested bullets, bold/italic runs, links, tables, notes via `python-pptx` | Theme/slide colors, background, fonts, palette |
+| **PDF** | Page text with bold/italic spans, bullet detection and nested indentation via `PyMuPDF`; fallback `pypdf` | Background color, text/heading colors, accent color, fonts (PyMuPDF) |
+| **HTML** | Sections/slides, headings, paragraphs, nested lists, tables, blockquotes, links, images, code | CSS colors, variables, gradients, background, fonts, accent |
 
 **Notes**
+- Imported content is stored as rich Markdown so it renders with headings, emphasis, lists, tables and quotes.
+- Imported designs include extensive custom CSS (gradients, typography, lists, tables, quotes, code, images, responsive rules).
 - PDFs need **selectable text**. Scanned/image-only PDFs require OCR first.
-- Design extraction produces a heuristic design even if no AI provider is configured.
+- Design extraction produces a modern heuristic design even if no AI provider is configured.
 - With AI configured, extracted style hints and content are passed to the model for a more polished result.
 
 ---

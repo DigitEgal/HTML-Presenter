@@ -1,11 +1,19 @@
 import html
 import os
+import re
 import markdown
 from .storage import get_design, default_design_settings, EXPORTS_DIR
 
 
 def _md(text: str) -> str:
     return markdown.markdown(text or "", extensions=["extra", "nl2br", "sane_lists"])
+
+
+def _md_inline(text: str) -> str:
+    """Render Markdown for inline contexts (e.g. <li>) without wrapping <p> tags."""
+    rendered = _md(text)
+    match = re.fullmatch(r"<p>(.*?)</p>", rendered.strip(), re.DOTALL)
+    return match.group(1) if match else rendered
 
 
 def render_presentation_html(presentation: dict, design: dict | None = None) -> str:
@@ -26,7 +34,7 @@ def render_presentation_html(presentation: dict, design: dict | None = None) -> 
         bullets = slide.get("bullets") or []
         bullets_html = ""
         if bullets:
-            items = "".join(f"<li>{_md(b)}</li>" for b in bullets)
+            items = "".join(f"<li>{_md_inline(b)}</li>" for b in bullets)
             bullets_html = f"<ul class=\"bullets\">{items}</ul>"
         notes = html.escape(slide.get("notes") or "")
         notes_attr = f' data-notes="{notes}"' if notes else ""
@@ -62,33 +70,66 @@ def render_presentation_html(presentation: dict, design: dict | None = None) -> 
   --title-align: {settings.get("title_align", "center")};
 }}
 * {{ box-sizing: border-box; }}
+html {{ scroll-behavior: smooth; }}
 html, body {{ margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); }}
+body {{ overflow: hidden; }}
 .deck {{ position: relative; width: 100vw; height: 100vh; overflow: hidden; }}
-.slide {{ position: absolute; inset: 0; padding: 64px 80px; display: none; }}
+.slide {{ position: absolute; inset: 0; padding: 64px 80px; display: none; background: var(--bg); }}
 .slide.active {{ display: flex; flex-direction: column; justify-content: center; }}
-.slide-inner {{ max-width: 1100px; width: 100%; margin: 0 auto; text-align: var(--align); }}
+.slide.active .slide-inner {{ animation: slide-in 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) both; }}
+@keyframes slide-in {{ from {{ opacity: 0; transform: translateY(16px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+.slide-inner {{ position: relative; max-width: 1120px; width: 100%; margin: 0 auto; text-align: var(--align); }}
 .slide.layout-title .slide-inner {{ text-align: var(--title-align); }}
-.slide.layout-title .slide-title {{ font-size: 3.5rem; margin-bottom: 0.5em; }}
+.slide.layout-title .slide-title {{ font-size: clamp(2.4rem, 5.2vw, 4.4rem); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 0.35em; }}
 .slide.layout-section .slide-inner {{ text-align: center; }}
-h1, h2, h3 {{ color: var(--heading); font-family: var(--heading-font); margin: 0 0 0.6em; }}
+.slide.layout-section .slide-title {{ font-size: clamp(2rem, 3.8vw, 3.2rem); letter-spacing: -0.02em; }}
+h1, h2, h3, h4 {{ color: var(--heading); font-family: var(--heading-font); margin: 0 0 0.6em; }}
 h1.slide-title {{ font-size: 3rem; }}
-h2.slide-title {{ font-size: 2.2rem; }}
-.slide-content {{ font-size: 1.6rem; line-height: 1.5; }}
-.slide-content p {{ margin: 0.4em 0; }}
-.slide-content ul, .slide-content ol {{ margin: 0.5em 0 0.5em 1.2em; }}
-.slide-content li {{ margin: 0.25em 0; }}
-a {{ color: var(--accent); }}
-.slide-number {{ position: absolute; right: 28px; bottom: 20px; font-size: 0.95rem; opacity: 0.7; display: {show_numbers}; }}
+h2.slide-title {{ font-size: clamp(1.8rem, 2.8vw, 2.5rem); }}
+.slide-content {{ font-size: clamp(1.05rem, 1.5vw, 1.55rem); line-height: 1.6; }}
+.slide-content > *:first-child {{ margin-top: 0; }}
+.slide-content > *:last-child {{ margin-bottom: 0; }}
+.slide-content p {{ margin: 0.55em 0; }}
+.slide-content h1, .slide-content h2, .slide-content h3, .slide-content h4 {{ margin: 0.9em 0 0.35em; line-height: 1.2; }}
+.slide-content h1 {{ font-size: 1.6em; }}
+.slide-content h2 {{ font-size: 1.35em; }}
+.slide-content h3 {{ font-size: 1.18em; }}
+.slide-content h4 {{ font-size: 1.05em; }}
+.slide-content ul, .slide-content ol {{ margin: 0.6em 0 0.6em 1.25em; padding-left: 0.35em; }}
+.slide-content li {{ margin: 0.3em 0; }}
+.slide-content li > ul, .slide-content li > ol {{ margin: 0.25em 0 0.25em 1em; }}
+.slide-content strong {{ color: var(--heading); font-weight: 700; }}
+.slide-content em {{ color: var(--accent); }}
+.slide-content a {{ color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(127, 127, 127, 0.4); }}
+.slide-content a:hover {{ border-bottom-color: var(--accent); }}
+.slide-content blockquote {{ margin: 1em 0; padding: 0.7em 1.1em; border-left: 4px solid var(--accent); background: rgba(127, 127, 127, 0.10); border-radius: 0 12px 12px 0; font-style: italic; }}
+.slide-content blockquote p {{ margin: 0.2em 0; }}
+.slide-content table {{ width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.84em; }}
+.slide-content th, .slide-content td {{ padding: 0.55em 0.75em; border-bottom: 1px solid rgba(127, 127, 127, 0.25); text-align: left; vertical-align: top; }}
+.slide-content th {{ color: var(--heading); background: rgba(127, 127, 127, 0.12); font-weight: 600; }}
+.slide-content tbody tr:hover td {{ background: rgba(127, 127, 127, 0.06); }}
+.slide-content code {{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.86em; padding: 0.12em 0.38em; border-radius: 6px; background: rgba(127, 127, 127, 0.14); }}
+.slide-content pre {{ margin: 1em 0; padding: 1em 1.2em; border-radius: 12px; background: rgba(0, 0, 0, 0.28); overflow: auto; }}
+.slide-content pre code {{ padding: 0; background: none; }}
+.slide-content img {{ max-width: 100%; max-height: 55vh; border-radius: 14px; box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28); }}
+.slide-content hr {{ border: none; height: 1px; margin: 1.2em 0; background: linear-gradient(90deg, transparent, rgba(127, 127, 127, 0.35), transparent); }}
+.slide-content mark {{ background: var(--accent); color: #08111f; padding: 0 0.25em; border-radius: 4px; }}
+.slide-number {{ position: absolute; right: 28px; bottom: 20px; font-size: 0.9rem; opacity: 0.72; display: {show_numbers}; }}
 .controls {{ position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }}
-.controls button {{ background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid rgba(255,255,255,0.2); padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }}
-.controls button:hover {{ background: rgba(255,255,255,0.16); }}
-.progress {{ position: fixed; left: 0; bottom: 0; height: 4px; background: var(--accent); width: 0; transition: width 0.2s ease; }}
+.controls button {{ background: rgba(127, 127, 127, 0.16); color: var(--text); border: 1px solid rgba(127, 127, 127, 0.28); padding: 8px 14px; border-radius: 999px; cursor: pointer; font-size: 14px; backdrop-filter: blur(8px); }}
+.controls button:hover {{ background: rgba(127, 127, 127, 0.28); }}
+.progress {{ position: fixed; left: 0; bottom: 0; height: 4px; background: var(--accent); width: 0; transition: width 0.2s ease; z-index: 20; }}
 .help {{ position: fixed; top: 14px; right: 18px; font-size: 12px; opacity: 0.55; }}
 @media (max-width: 800px) {{
   .slide {{ padding: 32px 28px 60px; }}
-  .slide-content {{ font-size: 1.2rem; }}
-  h1.slide-title {{ font-size: 2rem; }}
-  h2.slide-title {{ font-size: 1.6rem; }}
+  .slide-content {{ font-size: 1.1rem; }}
+  h1.slide-title {{ font-size: 2.1rem; }}
+  h2.slide-title {{ font-size: 1.7rem; }}
+  .slide.layout-title .slide-title {{ font-size: 2.4rem; }}
+}}
+@media (prefers-reduced-motion: reduce) {{
+  .slide.active .slide-inner {{ animation: none; }}
+  .progress {{ transition: none; }}
 }}
 {custom_css}
 </style>
